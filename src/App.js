@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { getMinutes } from 'date-fns';
+import { addHours, getDayOfYear } from 'date-fns';
+import format from 'date-fns/format';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import {
   TimePicker,
@@ -10,11 +11,28 @@ import { TextField, Slider, Button } from '@material-ui/core';
 function App() {
   const [selectedDate, handleDateChange] = useState(new Date());
   const [description, setDescription] = useState('');
+  const [sliderValue, setSliderValue] = useState(1);
   const [inputFocused, setFocused] = useState(true);
+  const [tasks, setTasks] = useState([]);
 
   const changeData = (value) => {
     handleDateChange(value)
-    console.log("valor da data", getMinutes(value));
+  }
+
+  const addTasks = () => {
+    const sum = addHours(selectedDate, sliderValue);
+    if ((getDayOfYear(sum) - getDayOfYear(selectedDate)) !== 0 ) {
+      return alert('A duracao da tarefa nao pode ir para o proximo dia')
+    } if (!description) {
+      return alert('A descricao nao pode estar vazia')
+    }
+    const finalMoment = format(sum, 'HH:mm');
+    setTasks(() => {
+      const list = [...tasks, { finalMoment, description }];
+      return list;
+    });
+    setDescription('');
+    setSliderValue(1);
   }
 
   return (
@@ -58,8 +76,10 @@ function App() {
             <Slider
               max={23}
               min={1}
-              style={{marginTop: 15}}
+              style={{ marginTop: 15 }}
               defaultValue={1}
+              value={sliderValue}
+              onChange={(obj, value) => setSliderValue(value) }
               aria-labelledby="discrete-slider-always"
               step={1}
               valueLabelDisplay="on"
@@ -67,13 +87,28 @@ function App() {
           </div>
         </div>
         <div style={{flexDirection:'row', display:'flex', marginTop: 30}}>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={()=>addTasks()}>
             Add Task
           </Button>
           <Button variant="contained" color="secondary" style={{marginLeft: 50 }}>
             Generate best schedule
           </Button>
         </div>
+        {tasks.length > 0 &&
+          <div>
+            <h1>Lista de tarefas</h1>
+          {tasks.map((item, index) => (
+            <div key={index} style={{ flexDirection: 'row', display: 'flex' }}>
+              <h3 style={{alignSelf: 'center'}}>Tarefa numero {index + 1}</h3>
+              <div style={{marginLeft: 20}}>
+                <p>{item.description}</p>
+                <p>{item.finalMoment}</p>
+              </div>
+            </div>
+          ))  
+          }
+          </div>
+        }
       </div>
     </div>
   );
