@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addHours, isAfter, isEqual, isBefore } from 'date-fns';
+import { addHours, isEqual, isBefore } from 'date-fns';
 import format from 'date-fns/format';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import {
@@ -19,19 +19,19 @@ function App() {
   const [bestSchedule, setBestSchedule] = useState([]);
   const [doneTasks, setDoneTasks] = useState([]);
 
+
+  // Manage Tasks
+
   const changeData = (value) => {
     handleDateChange(value)
   }
 
   const addTasks = () => {
     const sum = addHours(selectedDate, sliderValue);
-    /* if ((getDayOfYear(sum) - getDayOfYear(selectedDate)) !== 0) {
-      return alert('A duracao da tarefa nao pode ir para o proximo dia')
-    } */
 
-    /*    if (!description) {
-         return alert('A descricao nao pode estar vazia')
-       } */
+    if (!description) {
+      return alert('A descricao nao pode estar vazia')
+    }
 
     const initialDate = selectedDate;
     const finalDate = sum;
@@ -53,6 +53,15 @@ function App() {
   }
 
 
+  const deleteDoneTask = (taskId) => {
+    setDoneTasks(() => {
+      let doneT = doneTasks.filter(element => element.id !== taskId);
+      return doneT;
+    })
+  }
+
+  // Drag And Drop Events
+
   const onDragStart = (e, itemId, listId) => {
     e.dataTransfer.setData("ListId", listId);
     e.dataTransfer.setData("itemId", itemId);
@@ -63,15 +72,17 @@ function App() {
     let itemId = e.dataTransfer.getData("itemId");
 
     if (incomingId === "tasks" || incomingId === "order") {
-      console.log(tasks[0].id, itemId)
       let item = tasks.find(element => element.id === itemId);
+
       setTasks(() => {
         let newTasks = tasks.filter(element => element.id !== itemId);
         return newTasks;
       });
       setDoneTasks([item, ...doneTasks]);
+
     } else if (incomingId === "done") {
       let item = doneTasks.find(element => element.id === itemId);
+
       setDoneTasks(() => {
         let newTasks = doneTasks.filter(element => element.id !== itemId);
         return newTasks;
@@ -81,12 +92,8 @@ function App() {
 
   }
 
-  const deleteDoneTask = (taskId) => {
-    setDoneTasks(() => {
-      let doneT = doneTasks.filter( element => element.id !== taskId);
-      return doneT;
-    })
-  }
+
+  // Interval Scheduling
 
   useEffect(() => {
     if (tasks.length > 0) {
@@ -109,9 +116,7 @@ function App() {
     let aux = sortTasks();
     finalTasks.push(aux[0]);
     let j = 0
-    console.log(aux);
-    console.log(aux[1]);
-    console.log(finalTasks[0])
+
     for (var i = 1; i < aux.length; i++) {
       if (isBefore(aux[i].initialDate, finalTasks[j].finalDate) || isEqual(aux[i].initialDate, finalTasks[j].finalDate)) {
         finalTasks.push(aux[i]);
@@ -123,11 +128,11 @@ function App() {
 
   return (
     <div>
-      <h2 style={{ textAlign: 'center' }}>Welcome to the Task Manager!!
+      <h2 style={styles.title}>Welcome to the Task Manager!!
         Here you can get the highest number of tasks that you can do during the day</h2>
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ padding: 10, paddingTop: 0, width: "40%" }}>
+        <div style={styles.createTasks}>
+          <div style={styles.instructions}>
             <p>Insert your task description and the start time</p>
             <div>
               <h3>
@@ -145,8 +150,8 @@ function App() {
                 onChange={(value) => setDescription(value.target.value)}
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div style={{ marginRight: 50 }}>
+            <div style={styles.pickers}>
+              <div style={styles.startTime}>
                 <h3>
                   Start time
             </h3>
@@ -174,30 +179,58 @@ function App() {
                 />
               </div>
             </div>
-            <div style={{ flexDirection: 'row', display: 'flex', margin: 30 }}>
-              <Button variant="contained" color="primary" onClick={() => addTasks()}>
-                Add Task
-          </Button>
-              {/*               <Button variant="contained" color="secondary" onClick={() => createBestSchedule()} style={{ marginLeft: 50 }}>
-                Generate best schedule
-          </Button> */}
+            <div style={styles.buttonContainer}>
+              <Button variant="contained" color="primary" onClick={() => addTasks()}>Add Task</Button>
             </div>
           </div>
           <div>
             <List items={tasks} title={"Task List"} id="tasks" key="tasks" onDrop={onDrop} onDragStart={onDragStart} />
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={styles.taskContent}>
           <div>
-            <List containerColor={"#00FF7F"} items={doneTasks} title={"Done Tasks"} altText={"Drop here done tasks"} id="done" key="done" onDrop={onDrop} onDragStart={onDragStart} close deleteItem={deleteDoneTask}/>
+            <List containerColor={"#00FF7F"} items={doneTasks} title={"Done Tasks"} altText={"Drop here done tasks"} id="done" key="done" onDrop={onDrop} onDragStart={onDragStart} close deleteItem={deleteDoneTask} />
           </div>
           <div>
-            <List items={bestSchedule} title={"Recommended order"} id="order" key="order"  containerColor={"#00BFFF"} onDrop={onDrop} onDragStart={onDragStart} />
+            <List items={bestSchedule} title={"Recommended order"} id="order" key="order" containerColor={"#00BFFF"} onDrop={onDrop} onDragStart={onDragStart} />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  title: {
+    textAlign: 'center'
+  },
+  createTasks: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  instructions: {
+    padding: 10,
+    paddingTop: 0,
+    width: "40%"
+  },
+  pickers: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  startTime: {
+    marginRight: 50
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    display: 'flex',
+    margin: 30
+  },
+  taskContent: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }
+};
 
 export default App;
