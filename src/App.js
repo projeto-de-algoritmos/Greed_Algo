@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addHours, isAfter } from 'date-fns';
+import { addHours, isAfter, isEqual, isBefore } from 'date-fns';
 import format from 'date-fns/format';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import {
@@ -14,6 +14,7 @@ function App() {
   const [sliderValue, setSliderValue] = useState(1);
   const [inputFocused, setFocused] = useState(true);
   const [tasks, setTasks] = useState([]);
+  const [bestSchedule, setBestSchedule] = useState([]);
 
   const changeData = (value) => {
     handleDateChange(value)
@@ -23,9 +24,12 @@ function App() {
     const sum = addHours(selectedDate, sliderValue);
     /* if ((getDayOfYear(sum) - getDayOfYear(selectedDate)) !== 0) {
       return alert('A duracao da tarefa nao pode ir para o proximo dia')
-    } if (!description) {
-      return alert('A descricao nao pode estar vazia')
     } */
+
+    if (!description) {
+      return alert('A descricao nao pode estar vazia')
+    }
+
     const initialDate = selectedDate;
     const finalDate = sum;
     const initialMoment = format(
@@ -45,6 +49,30 @@ function App() {
     setSliderValue(1);
   }
 
+  const sortTasks = () => {
+    let aux = tasks;
+    aux.sort(function (a, b) {
+      return b.finalDate - a.finalDate;
+    })
+    return aux;
+  }
+
+  const createBestSchedule = () => {
+    let finalTasks = [];
+    let aux = sortTasks();
+    finalTasks.push(aux[0]);
+    let j = 0
+    console.log(aux);
+    console.log(aux[1]);
+    console.log(finalTasks[0])
+    for (var i = 1; i < aux.length; i++) {
+      if (isBefore(aux[i].initialDate, finalTasks[j].finalDate) || isEqual(aux[i].initialDate, finalTasks[j].finalDate)) {
+        finalTasks.push(aux[i]);
+        j++
+      }
+    }
+    setBestSchedule(finalTasks);
+  }
 
   return (
     <div>
@@ -101,7 +129,7 @@ function App() {
           <Button variant="contained" color="primary" onClick={() => addTasks()}>
             Add Task
           </Button>
-          <Button variant="contained" color="secondary" style={{ marginLeft: 50 }}>
+          <Button variant="contained" color="secondary" onClick={() => createBestSchedule()} style={{ marginLeft: 50 }}>
             Generate best schedule
           </Button>
         </div>
