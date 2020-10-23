@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addHours, getDayOfYear } from 'date-fns';
+import { addHours, isAfter } from 'date-fns';
 import format from 'date-fns/format';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import {
@@ -21,44 +21,55 @@ function App() {
 
   const addTasks = () => {
     const sum = addHours(selectedDate, sliderValue);
-    if ((getDayOfYear(sum) - getDayOfYear(selectedDate)) !== 0 ) {
+    /* if ((getDayOfYear(sum) - getDayOfYear(selectedDate)) !== 0) {
       return alert('A duracao da tarefa nao pode ir para o proximo dia')
     } if (!description) {
       return alert('A descricao nao pode estar vazia')
-    }
-    const finalMoment = format(sum, 'HH:mm');
+    } */
+    const initialDate = selectedDate;
+    const finalDate = sum;
+    const initialMoment = format(
+      selectedDate,
+      "HH:mm' 'dd/MM'"
+    );
+    const finalMoment = format(
+      sum,
+      "HH:mm' 'dd/MM'"
+    );
+
     setTasks(() => {
-      const list = [...tasks, { finalMoment, description }];
+      const list = [...tasks, { initialMoment, finalMoment, initialDate, finalDate, description, id: tasks.length + 1 }];
       return list;
     });
     setDescription('');
     setSliderValue(1);
   }
 
+
   return (
-    <div style={{ flex: 1 }}>
-      <div style={{marginLeft:10}}>
+    <div>
+      <div style={{ marginLeft: 10 }}>
         <h2 style={{ textAlign: 'center' }}>Welcome to the Task Manager!!
         Here you can get the highest number of tasks that you can do during the day</h2>
-        <p style={{marginTop: 50}}>Insert your task description and the start time</p>
+        <p style={{ marginTop: 50 }}>Insert your task description and the start time</p>
         <div>
           <h3>
             Description
           </h3>
           <TextField
             value={description}
-            onFocus={() => {setFocused(false)}}
-            onBlur={() => {setFocused(true)}}
+            onFocus={() => { setFocused(false) }}
+            onBlur={() => { setFocused(true) }}
             placeholder={'Description'}
             style={{
               width: window.innerWidth / 2,
               borderColor: inputFocused ? 'black' : 'blue',
             }}
-            onChange={(value) => setDescription(value.target.value) }
+            onChange={(value) => setDescription(value.target.value)}
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{marginRight: 50}}>
+          <div style={{ marginRight: 50 }}>
             <h3>
               Start time
             </h3>
@@ -69,7 +80,7 @@ function App() {
               />
             </MuiPickersUtilsProvider>
           </div>
-          <div> 
+          <div>
             <h3>
               Task duration
             </h3>
@@ -79,34 +90,38 @@ function App() {
               style={{ marginTop: 15 }}
               defaultValue={1}
               value={sliderValue}
-              onChange={(obj, value) => setSliderValue(value) }
+              onChange={(obj, value) => setSliderValue(value)}
               aria-labelledby="discrete-slider-always"
               step={1}
               valueLabelDisplay="on"
             />
           </div>
         </div>
-        <div style={{flexDirection:'row', display:'flex', marginTop: 30}}>
-          <Button variant="contained" color="primary" onClick={()=>addTasks()}>
+        <div style={{ flexDirection: 'row', display: 'flex', margin: 30 }}>
+          <Button variant="contained" color="primary" onClick={() => addTasks()}>
             Add Task
           </Button>
-          <Button variant="contained" color="secondary" style={{marginLeft: 50 }}>
+          <Button variant="contained" color="secondary" style={{ marginLeft: 50 }}>
             Generate best schedule
           </Button>
         </div>
         {tasks.length > 0 &&
-          <div>
-            <h1>Lista de tarefas</h1>
-          {tasks.map((item, index) => (
-            <div key={index} style={{ flexDirection: 'row', display: 'flex' }}>
-              <h3 style={{alignSelf: 'center'}}>Tarefa numero {index + 1}</h3>
-              <div style={{marginLeft: 20}}>
-                <p>{item.description}</p>
-                <p>{item.finalMoment}</p>
+          <div style={{ padding: 20, overflowY: 'scroll', width: "45vw", height: "30vh", borderColor: '#F2F2F2', borderWidth: 5, borderStyle: "solid" }}>
+            <h2>Task List</h2>
+            {tasks.map((item, index) => (
+              <div key={index} style={{ backgroundColor: '#6d8cee', flexDirection: 'row', display: 'flex', marginTop: 10, marginBottom: 10, padding: 20, width: "90%", overflow: 'hidden' }}>
+                {/* <h3 style={{ alignSelf: 'center', marginRight: 20 }}>Tarefa numero {index + 1}</h3> */}
+                <div style={{ marginLeft: 20, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', width: '80%' }}>
+                  <div style={{ marginBottom: 5 }}>{item.description}</div>
+                  <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', justifyContent: 'flex-start', width: '70%' }}>
+                    <div>{item.initialMoment}</div>
+                    <div style={{ marginLeft: 20, marginRight: 20 }}>-</div>
+                    <div>{item.finalMoment}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))  
-          }
+            ))
+            }
           </div>
         }
       </div>
