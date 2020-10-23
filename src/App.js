@@ -17,6 +17,7 @@ function App() {
   const [inputFocused, setFocused] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [bestSchedule, setBestSchedule] = useState([]);
+  const [doneTasks, setDoneTasks] = useState([]);
 
   const changeData = (value) => {
     handleDateChange(value)
@@ -87,8 +88,8 @@ function App() {
       <h2 style={{ textAlign: 'center' }}>Welcome to the Task Manager!!
         Here you can get the highest number of tasks that you can do during the day</h2>
       <div>
-        <div style={{ display: 'flex' }}>
-          <div style={{ padding: 10, paddingTop: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ padding: 10, paddingTop: 0 , width: "40%"}}>
             <p>Insert your task description and the start time</p>
             <div>
               <h3>
@@ -100,7 +101,7 @@ function App() {
                 onBlur={() => { setFocused(true) }}
                 placeholder={'Description'}
                 style={{
-                  width: window.innerWidth / 2,
+                  width: "100%",
                   borderColor: inputFocused ? 'black' : 'blue',
                 }}
                 onChange={(value) => setDescription(value.target.value)}
@@ -145,16 +146,16 @@ function App() {
             </div>
           </div>
           <div>
-            <List items={bestSchedule} title={"Recommended order"} />
+            <List items={tasks} title={"Task List"} />
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <List items={tasks} title={"Task List"} />
+            <List items={doneTasks} title={"Done Tasks"} />
           </div>
-{/*           <div>
+          <div>
             <List items={bestSchedule} title={"Recommended order"} />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
