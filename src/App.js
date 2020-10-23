@@ -45,16 +45,47 @@ function App() {
     );
 
     setTasks(() => {
-      const list = [...tasks, { initialMoment, finalMoment, initialDate, finalDate, description, id: tasks.length + 1 }];
+      const list = [...tasks, { initialMoment, finalMoment, initialDate, finalDate, description, id: tasks.length.toString() }];
       return list;
     });
     setDescription('');
     setSliderValue(1);
   }
 
+
+  const onDragStart = (e, itemId, listId) => {
+    e.dataTransfer.setData("ListId", listId);
+    e.dataTransfer.setData("itemId", itemId);
+  }
+
+  const onDrop = (e) => {
+    let incomingId = e.dataTransfer.getData("ListId");
+    let itemId = e.dataTransfer.getData("itemId");
+
+    if (incomingId === "tasks" || incomingId === "order") {
+      console.log(tasks[0].id, itemId)
+      let item = tasks.find(element => element.id === itemId);
+      setTasks(() => {
+        let newTasks = tasks.filter(element => element.id !== itemId);
+        return newTasks;
+      });
+      setDoneTasks([item, ...doneTasks]);
+    } else if (incomingId === "done") {
+      let item = doneTasks.find(element => element.id === itemId);
+      setDoneTasks(() => {
+        let newTasks = doneTasks.filter(element => element.id !== itemId);
+        return newTasks;
+      });
+      setTasks([...tasks, item]);
+    }
+
+  }
+
   useEffect(() => {
-    if ( tasks.length > 0) {
+    if (tasks.length > 0) {
       createBestSchedule();
+    } else {
+      setBestSchedule([]);
     }
   }, [tasks])
 
@@ -89,7 +120,7 @@ function App() {
         Here you can get the highest number of tasks that you can do during the day</h2>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ padding: 10, paddingTop: 0 , width: "40%"}}>
+          <div style={{ padding: 10, paddingTop: 0, width: "40%" }}>
             <p>Insert your task description and the start time</p>
             <div>
               <h3>
@@ -140,21 +171,21 @@ function App() {
               <Button variant="contained" color="primary" onClick={() => addTasks()}>
                 Add Task
           </Button>
-{/*               <Button variant="contained" color="secondary" onClick={() => createBestSchedule()} style={{ marginLeft: 50 }}>
+              {/*               <Button variant="contained" color="secondary" onClick={() => createBestSchedule()} style={{ marginLeft: 50 }}>
                 Generate best schedule
           </Button> */}
             </div>
           </div>
           <div>
-            <List items={tasks} title={"Task List"} />
+            <List items={tasks} title={"Task List"} id="tasks" onDrop={onDrop} onDragStart={onDragStart} />
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <List items={doneTasks} title={"Done Tasks"} />
+            <List containerColor={"#00FF7F"} items={doneTasks} title={"Done Tasks"} altText={"Drop here done tasks"} id="done" onDrop={onDrop} onDragStart={onDragStart} />
           </div>
           <div>
-            <List items={bestSchedule} title={"Recommended order"} />
+            <List items={bestSchedule} title={"Recommended order"} id={"order"} containerColor={"#00BFFF"} onDrop={onDrop} onDragStart={onDragStart}/>
           </div>
         </div>
       </div>
