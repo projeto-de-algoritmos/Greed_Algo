@@ -81,6 +81,13 @@ function App() {
 
   }
 
+  const deleteDoneTask = (taskId) => {
+    setDoneTasks(() => {
+      let doneT = doneTasks.filter( element => element.id !== taskId);
+      return doneT;
+    })
+  }
+
   useEffect(() => {
     if (tasks.length > 0) {
       createBestSchedule();
@@ -177,15 +184,15 @@ function App() {
             </div>
           </div>
           <div>
-            <List items={tasks} title={"Task List"} id="tasks" onDrop={onDrop} onDragStart={onDragStart} />
+            <List items={tasks} title={"Task List"} id="tasks" key="tasks" onDrop={onDrop} onDragStart={onDragStart} />
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <List containerColor={"#00FF7F"} items={doneTasks} title={"Done Tasks"} altText={"Drop here done tasks"} id="done" onDrop={onDrop} onDragStart={onDragStart} />
+            <List containerColor={"#00FF7F"} items={doneTasks} title={"Done Tasks"} altText={"Drop here done tasks"} id="done" key="done" onDrop={onDrop} onDragStart={onDragStart} close deleteItem={deleteDoneTask}/>
           </div>
           <div>
-            <List items={bestSchedule} title={"Recommended order"} id={"order"} containerColor={"#00BFFF"} onDrop={onDrop} onDragStart={onDragStart}/>
+            <List items={bestSchedule} title={"Recommended order"} id="order" key="order"  containerColor={"#00BFFF"} onDrop={onDrop} onDragStart={onDragStart} />
           </div>
         </div>
       </div>
