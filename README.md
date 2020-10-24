@@ -1,44 +1,53 @@
-**!! Atenção: Renomeie o seu repositório para (Tema)_(NomeDoProjeto). !!** 
+# TaskManager
 
-Temas:
- - Grafos1
- - Grafos2
- - PD
- - D&C
- - Greed
- - Final 
- 
- **!! *Não coloque os nomes dos alunos no título do repositório*. Exemplo de título correto: Grafos2_Labirinto-do-Minotauro !!**
- 
- (Apague essa seção)
-
-# NomedoProjeto
-
-**Número da Lista**: X<br>
-**Conteúdo da Disciplina**: XXXXXXXXXX<br>
+**Número da Lista**: 3<br>
+**Conteúdo da Disciplina**: Greed<br>
 
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
+| 16/0119316 |  Ezequiel de Oliveira dos Reis |
+| 16/0148375  |  Vitor Leal dos Santos |
 
 ## Sobre 
-Descreva os objetivos do seu projeto e como ele funciona. 
+O projeto consiste na organizacao de tarefas diarias de forma automatizada por meio do algoritmo de interval scheduling. Com isso, podemos obter a melhor sequencia possivel em que as tarefas devem ser realizadas. 
 
 ## Screenshots
 Adicione 3 ou mais screenshots do projeto em funcionamento.
 
 ## Instalação 
-**Linguagem**: xxxxxx<br>
-**Framework**: (caso exista)<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
+**Linguagem**: Javascript<br>
+**Framework**: React<br>
+
+Primeiramente devemos clonar o repositório:
+
+    $ git clone https://github.com/projeto-de-algoritmos/Greed_TaskManager
+
+Após clonar o repositório, é preciso acessar a pasta do projeto:
+
+    $ cd Greed_TaskManager
+
+Para rodar o projeto é necessário ter instalado o [yarn](https://classic.yarnpkg.com/pt-BR/docs/install/#debian-stable) na versão estável mais atual.
+
+Após instalar o yarn, vamos instalar as dependências do projeto.
+
+    Na pasta raiz, execute:
+
+    $ yarn install
+
+Depois, subir o servidor:
+
+    $ yarn start
+
+E então acessar no navegador:
+
+    http://localhost:3000/
 
 ## Uso 
-Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
+Devemos inserir uma tarefa com seu respectivo horario e descricao e adicionar para ser possivel ver a lista de tarefas. Com isso, as tarefas sao organizadas automaticamente na melhor ordem possivel, caso seja necessario colocar uma tarefa como concluida ou deletar, basta arrasta-la para a parte de Done Tasks.
 
 ## Outros 
-Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
+
 
 
 
